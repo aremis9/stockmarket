@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block balance %}
+    Your balance: <span>{{ user.cash | usd }}</span>
+{% endblock %}
+
+{% block main %}
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Action</th>
+                <th scope="col">Symbol</th>
+                <th scope="col">Shares</th>
+                <th scope="col">Price</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Transacted</th>
+
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for tns in transactions %}
+                <tr>
+                    <td class="action">{{ tns.action }}</td>
+                    <th scope="row">{{ tns.symbol }}</th>
+                    <td>{{ tns.shares }}</td>
+                    <td>{{ tns.price | usd }}</td>
+                    <td>{{ tns.amount | usd }}</td>
+                    <td>{{ tns.date }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        $(function(){
+            $("tbody").each(function(elem,index){
+                var arr = $.makeArray($("tr",this).detach());
+                arr.reverse();
+                $(this).append(arr);
+            });
+        });
+
+        actions = document.getElementsByClassName("action")
+        for (let action of actions)
+        {
+            action.style.fontWeight = 600;
+            if (action.innerHTML === "Buy") {
+                action.style.color = "#00ff48";
+            }
+            else if (action.innerHTML === "Sell") {
+                action.style.color = "#eb150e";
+            }
+        }
+
+
+    </script>
+{% endblock %}

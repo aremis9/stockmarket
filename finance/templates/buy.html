@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Buy
+{% endblock %}
+
+{% block balance %}
+    Your balance: <span>{{ user.cash | usd }}</span>
+{% endblock %}
+
+{% block main %}
+
+    {% if not validbuy %}
+        <form action="/buy" method="post">
+            <div class="form-group">
+                {% if this %}
+                    <input autofocus class="form-control" name="symbol" placeholder="Symbol" type="text" id="autocomplete" value="{{ this }}">
+                {% else %}
+                    <input autofocus class="form-control" name="symbol" placeholder="Symbol" type="text" id="autocomplete">
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <input autocomplete="off" class="form-control" min="1" name="shares" placeholder="Shares" type="number">
+            </div>
+            <button class="btn btn-primary" type="submit">Checkout</button>
+        </form>
+    {% else %}
+        <h4>You are about to buy:</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Symbol</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Shares</th>
+                    <th scope="col">Total Amount</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">{{ user.ssymbol }}</th>
+                    <td>{{ user.sname }}</td>
+                    <td>{{ user.sprice | usd }}</td>
+                    <td>{{ user.sshares }}</td>
+                    <td>{{ user.samount | usd }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <h6>Your new balance: {{ user.newbal | usd }}</h6>
+        <form action="/buy" method="post">
+            <button class="btn btn-primary" type="submit">Confirm</button>
+        </form>
+    {% endif %}
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $("#autocomplete").autocomplete({
+                source:function(request, response) {
+                    $.getJSON("{{url_for('search')}}",{
+                        q: request.term, // in flask, "q" will be the argument to look for using request.args
+                    }, function(data) {
+                        response(data.matching_results); // matching_results from jsonify
+                    });
+                },
+                minLength: 1,
+                select: function(event, ui) {
+                    console.log(ui.item.value); // not in your question, but might help later
+                }
+            });
+        })
+    </script>
+{% endblock %}

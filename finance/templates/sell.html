@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Sell
+{% endblock %}
+
+{% block balance %}
+    Your balance: <span>{{ user.cash | usd }}</span>
+{% endblock %}
+
+{% block main %}
+
+    {% if not validsell %}
+        <form action="/sell" method="post">
+            <div class="form-group">
+                <select class="form-control" name="symbol">
+                    {% if this %}
+                        <option disabled value="">Symbol</option>
+                    {% else %}
+                        <option disabled selected value="">Symbol</option>
+                    {% endif %}
+                    {% for s in symbol %}
+                        {% if s == this %}
+                            <option selected value="{{ s }}">{{ s }}</option>
+                        {% else %}
+                            <option value="{{ s }}">{{ s }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <input autocomplete="off" class="form-control" min="0" name="shares" placeholder="Shares" type="number">
+            </div>
+            <button class="btn btn-primary" type="submit">Sell</button>
+        </form>
+    {% else %}
+        <h4>You are about to sell:</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Symbol</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Shares</th>
+                    <th scope="col">Total Amount</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">{{ user.ssymbol }}</th>
+                    <td>{{ user.sname }}</td>
+                    <td>{{ user.sprice | usd }}</td>
+                    <td>{{ user.sshares }}</td>
+                    <td>{{ user.samount | usd }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <h6>Your new balance: {{ user.newbal | usd }}</h6>
+        <form action="/sell" method="post">
+            <button class="btn btn-primary" type="submit">Confirm</button>
+        </form>
+    {% endif %}
+{% endblock %}

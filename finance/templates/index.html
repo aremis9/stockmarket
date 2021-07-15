@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Portfolio
+{% endblock %}
+
+{% block balance %}
+    Your balance: <span>{{ user.cash | usd }}</span>
+{% endblock %}
+
+{% block main %}
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Symbol</th>
+                <th scope="col">Name</th>
+                <th scope="col">Shares</th>
+                <th scope="col">Price</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tfoot>
+            <tr>
+                <td colspan="4"></td>
+                <td>{{ total | usd }}</td>
+                <td></td>
+            </tr>
+            </tfoot>
+            <tbody>
+                <tr>
+                    <td>CASH</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ user.cash | usd }}</td>
+                    <td></td>
+                </tr>
+            {% for stock in hold %}
+                <tr>
+                    <th scope="row">{{ stock.symbol }}</th>
+                    <td>{{ stock.name }}</td>
+                    <td>{{ stock.shares }}</td>
+                    <td>{{ stock.price | usd }}</td>
+                    <td>{{ stock.amount | usd }}</td>
+                    <td class="action"><span>
+                        <form action="" method="post">
+                            <button class="action" name="buythis" type="submit" value="{{ stock.symbol }}">Buy</button> |
+                            <button class="action" name="sellthis" type="submit" value="{{ stock.symbol }}">Sell</button>
+                        </form>
+                    </span></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        $(function(){
+            $("tbody").each(function(elem,index){
+                var arr = $.makeArray($("tr",this).detach());
+                arr.reverse();
+                $(this).append(arr);
+            });
+        });
+
+        actions = document.getElementsByClassName("action")
+        for (let action of actions)
+        {
+            action.style.fontWeight = 600;
+            if (action.innerHTML === "Buy") {
+                action.style.color = "#00ff48";
+            }
+            else if (action.innerHTML === "Sell") {
+                action.style.color = "#eb150e";
+            }
+        }
+
+    </script>
+
+{% endblock %}
